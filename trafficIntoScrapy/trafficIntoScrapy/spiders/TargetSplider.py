@@ -6,23 +6,24 @@ from trafficIntoScrapy.items import TrafficInfoItem
 
 class TargetSplider(CrawlSpider):
         # scrapyをCLIから実行するときの識別子
-        name = 'hello'
+        name = 'traffic'
         # spiderに探査を許可するドメイン
-        allowed_domains = ["www.yahoo.co.jp"]
+        allowed_domains = ["transit.yahoo.co.jp"]
         # 起点(探査を開始する)URL
-        start_urls = ["http://www.yahoo.co.jp/"]
+        start_urls = ["http://transit.yahoo.co.jp/traininfo/area/6/#item306"]
         # LinkExtractorの引数で特定のルール(例えばURLにnewを含むページのみスクレイプするなど)を指定可能だが、今回は全てのページを対象とするため引数はなし
         # Ruleにマッチしたページをダウンロードすると、callbackに指定した関数が呼ばれる
         # followをTrueにすると、再帰的に探査を行う
-        rules = [Rule(LinkExtractor(), callback='parse_pageinfo', follow=True)]
+        rules = [Rule(LinkExtractor(allow=('detail',)), callback='parse_pageinfo', follow=False)]
         
         def parse_pageinfo(self, response):
                 sel = Selector(response)
                 item = TrafficInfoItem()
-                item['URL'] = response.url
+                #item['URL'] = response.url
                 # ページのどの部分をスクレイプするかを指定
-                # xPath形式での指定に加え、CSS形式での指定も可能
-                item['title'] = sel.xpath('/html/head/title/text()').extract()
+                #item['title'] = sel.xpath('/html/head/title/text()').extract()
+                item['index'] = sel.xpath('//h1[@class="title"]/text()').extract()
+                item['contents'] = sel.xpath('//div[@id="mdServiceStatus"]/dl/dt/text()').extract()
                 return item
-        
+                
         

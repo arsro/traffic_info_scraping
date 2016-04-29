@@ -17,6 +17,8 @@
 import scrapy
 
 class TrafficInfoItem(scrapy.Item):
-    URL = scrapy.Field()
-    title = scrapy.Field()
+    #URL = scrapy.Field()
+    #title = scrapy.Field()
+    index = scrapy.Field()
+    contents = scrapy.Field()
     pass
